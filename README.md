@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+### 一个简易的以太坊HD钱包
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> 此项目是一个简易的Ethereum钱包代码，仅供学习参考使用
 
-## Available Scripts
+#### 技术栈
 
-In the project directory, you can run:
+* Reactjs
+* ant design
+* ganache-cli
+* ethersjs
+* bip39
 
-### `yarn start`
+#### 安装启动
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+前端项目:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```shell
+$ cs 项目地址
+$ yarn install
+```
 
-### `yarn test`
+ganache-cli:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```shell
+$ ganache-cli -m '助记词(一般是12个单词)'
 
-### `yarn build`
+// 或使用 ganache-cli --help 查看帮助文档
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+// 也可以指定账户私钥和账户余额来创建初始测试账户
+$ ganache-cli --account="<privatekey>,balance" [--account="<privatekey>,balance"]
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+启动项目:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```shell
+$ yarn start
+```
 
-### `yarn eject`
+打开浏览器 [地址](http://127.0.0.1:3000), 端口自行配置
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### 关于
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. ganache-cli是以太坊测试软件的命令行版本，用于以太坊Dapp的开发与测试
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. 关于助记词，私钥和keystore
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   <img src="https://raw.githubusercontent.com/w1ndyz/windy-img/master/img/mnemonic.png" alt="mnemonic" style="zoom:50%;" />
 
-## Learn More
+3. 钱包的核心
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   打开钱包主要有一下几种方式:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* 私钥(privatekey)
+* keystore+密码(keystore+password)
+* 助记词(mnemonic code)
 
-### Code Splitting
+4. 什么是HD钱包？
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   HD钱包全称是分层确定性钱包(Hierarchical Deterministic)。他用随机数生成私钥，再用一个确定的、不可逆的算法，给予主私钥生成任意数量的子私钥。
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
