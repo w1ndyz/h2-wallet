@@ -15,7 +15,7 @@
 前端项目:
 
 ```shell
-$ cs 项目地址
+$ cd 项目地址
 $ yarn install
 ```
 
@@ -25,8 +25,8 @@ ganache-cli:
 $ ganache-cli -m '助记词(一般是12个单词)'
 
 // 或使用 ganache-cli --help 查看帮助文档
-
 // 也可以指定账户私钥和账户余额来创建初始测试账户
+
 $ ganache-cli --account="<privatekey>,balance" [--account="<privatekey>,balance"]
 ```
 
