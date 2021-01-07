@@ -1,4 +1,4 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import React, {Component} from 'react'
 import PubSub from 'pubsub-js'
 
