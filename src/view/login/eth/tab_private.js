@@ -4,7 +4,7 @@ import PubSub from 'pubsub-js'
 
 import { LockOutlined, DownloadOutlined } from '@ant-design/icons';
 
-let service = require('../../service/service')
+let service = require('../../../service/eth_service')
 
 export default class PrivateLogin extends Component {
   

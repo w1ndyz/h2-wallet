@@ -1,42 +1,25 @@
 import React, { Component } from 'react'
-import PubSub from 'pubsub-js'
 import { ConfigProvider } from 'antd'
-import LoginForm from './view/login/login'
-import Wallet from './view/wallet/wallet'
 import './App.css';
+import Home from './view/home/home'
+import EthHome from './view/home/eth_home'
+import TronHome from './view/home/tron_home'
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 class App extends Component {
-  state = {
-    login: false,
-    loading: false,
-    loginEvent: '',
-    wallets: []
-  }
-
-  componentWillMount() {
-    let loginEvent = PubSub.subscribe("onLoginSucc", this.onLoginSucc)
-    this.setState({loginEvent})
-  }
-
-  onLoginSucc = (msg, data) => {
-      console.log("登陆成功")
-      console.log(data)
-      this.setState({
-          login: true,
-          wallets: data
-      })
-  }
-
-  componentWillUnmount() {
-      PubSub.unsubscribe(this.state.loginEvent)
-  }
 
   render() {
-    let {login} = this.state
-    let content = login ? <Wallet wallets={this.state.wallets}/> : <LoginForm/>
     return (
         <ConfigProvider>
-            {content}
+            <Router>
+              <div>
+                <Switch>
+                  <Route path="/" exact component={Home}></Route>
+                  <Route path="/eth" component={EthHome}></Route>
+                  <Route path="/trx" component={TronHome}></Route>
+                </Switch>
+              </div>
+            </Router>
         </ConfigProvider>
     );
   }

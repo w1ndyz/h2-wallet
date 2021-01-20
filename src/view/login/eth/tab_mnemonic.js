@@ -6,7 +6,7 @@ import { UserOutlined, BookOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 
-let service = require('../../service/service')
+let service = require('../../../service/eth_service')
 
 export default class MmicLogin extends Component {
 

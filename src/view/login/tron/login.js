@@ -13,8 +13,8 @@ export default class Login extends Component {
       return (
         <Layout style={{ background: '#fff' }}>
           <PageHeader 
-            title="氢钱包"
-            avatar={{ src: 'images/ethereum.png', width: "50px", height:"50px" }}
+            title="波场氢钱包"
+            avatar={{ src: 'images/tron.png', width: "50px", height:"50px" }}
           />
           <Row type="flex" justify="center" align="middle" style={{minHeight:'50vh'}}>
             <Col span={12}>

@@ -15,7 +15,7 @@ import {
 import { MoneyCollectOutlined, IdcardOutlined, SwapOutlined, LockOutlined } from '@ant-design/icons';
 
 let ethers = require('ethers')
-let service = require('../../service/service')
+let service = require('../../service/eth_service')
 let fileSaver = require('file-saver');
 
 const tailLayout = {
@@ -157,7 +157,7 @@ onSendClick = () => {
     return (
       <Layout style={{ background: '#fff' }}>
         <PageHeader 
-          title="氢钱包"
+          title="以太坊氢钱包"
           avatar={{ src: 'images/ethereum.png', width: "50px", height:"50px" }}
         />
         <div className="site-card-wrapper">
@@ -245,7 +245,7 @@ onSendClick = () => {
                       prefix={<LockOutlined />}
                       addonBefore="密码"
                       placeholder="密码"
-                      type='pwd'
+                      type='password'
                       name='pwd'
                       value={this.state.pwd}
                       onChange={this.handleChange}
@@ -253,7 +253,6 @@ onSendClick = () => {
                   </Form.Item>
                   <Form.Item {...tailLayout}>
                     <Button
-                      loading={this.state.loading}
                       onClick={this.onExportPrivate}
                       type="primary" size='large'
                     >

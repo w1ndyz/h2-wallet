@@ -4,7 +4,7 @@ import React, {Component} from 'react'
 
 import { LockOutlined, KeyOutlined } from '@ant-design/icons'
 
-let service = require('../../service/service')
+let service = require('../../../service/eth_service')
 
 const { TextArea } = Input;
 
