@@ -22,6 +22,8 @@ const tailLayout = {
   wrapperCol: { offset: 0, span: 48 },
 };
 
+console.log(">>>>>>>>>>>", eth_address)
+
 export default class Wallet extends Component {
 
   state = {
