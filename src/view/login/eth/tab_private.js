@@ -53,7 +53,7 @@ export default class PrivateLogin extends Component {
           />
         </Form.Item>
         <Form.Item>
-          <a href='#' onClick={this.handleCreateClick}>随机生成</a>
+          <a href='#/eth' onClick={this.handleCreateClick}>随机生成</a>
         </Form.Item>
         <br/>
         <br/>

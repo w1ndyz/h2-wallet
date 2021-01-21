@@ -11,7 +11,7 @@ import {
   Button,
   message
 } from 'antd'
-
+import { eth_address } from '../../config'
 import { MoneyCollectOutlined, IdcardOutlined, SwapOutlined, LockOutlined } from '@ant-design/icons';
 
 let ethers = require('ethers')
@@ -27,7 +27,7 @@ export default class Wallet extends Component {
   state = {
       wallets: [],// 支持多账户，默认第0个
       selectWallet: 0,
-      provider: "http://127.0.0.1:8545", //环境
+      provider: eth_address, //环境
       walletInfo: [], // 钱包信息，获取为异步，单独存储下
       activeWallet: {}, // 当前活跃钱包
       txto: "", // 交易接收地址

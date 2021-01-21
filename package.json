@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.10.0",
     "bip39": "^3.0.3",
+    "cross-env": "^7.0.3",
     "ethers": "^4.0.20",
     "file-saver": "^2.0.5",
     "json-format": "^1.0.1",
@@ -22,6 +23,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:dev": "cross-env REACT_APP_ENV=development react-scripts start",
+    "start:test": "cross-env REACT_APP_ENV=test react-scripts start",
+    "start:prod": "cross-env REACT_APP_ENV=production react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
