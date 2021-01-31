@@ -11,11 +11,10 @@ import {
   Button,
   message
 } from 'antd'
-import { eth_address } from '../../config'
+import { tron_address } from '../../config'
 import { MoneyCollectOutlined, IdcardOutlined, SwapOutlined, LockOutlined } from '@ant-design/icons';
 
-let ethers = require('ethers')
-let service = require('../../service/eth_service')
+let service = require('../../service/tron_service')
 let fileSaver = require('file-saver');
 
 const tailLayout = {
@@ -27,7 +26,7 @@ export default class Wallet extends Component {
   state = {
       wallets: [],// 支持多账户，默认第0个
       selectWallet: 0,
-      provider: eth_address, //环境
+      provider: tron_address, //环境
       walletInfo: [], // 钱包信息，获取为异步，单独存储下
       activeWallet: {}, // 当前活跃钱包
       txto: "", // 交易接收地址
@@ -61,20 +60,20 @@ updateActiveWallet() {
 // 获取当前的钱包
 getActiveWallet() {
     let wallet = this.state.wallets[this.state.selectWallet]
-    console.log("wallet", wallet)
-    // 激活钱包需要连接provider
-    return service.connectWallet(wallet, this.state.provider)
+    return wallet
 }
 
 // 加载钱包信息
 async loadActiveWalletInfo(wallet) {
-    let address = await wallet.getAddress()
-    let balance = await wallet.getBalance()
-    // 获取交易次数
-    let tx = await wallet.getTransactionCount()
-    console.log(address, balance, tx);
-    this.setState({
-        walletInfo: [address, balance, tx]
+  console.log("加载钱包信息:", wallet);
+  let address = wallet.address
+  let balance = await service.getBalance(wallet.address)
+  // let tx =  this.state.wallets[1]
+  // // 获取交易次数
+  // let tx = await wallet.getTransactionCount()
+  console.log(address, balance);
+  this.setState({
+      walletInfo: [address, balance]
     })
 }
 
@@ -91,22 +90,19 @@ onSendClick = () => {
     return 
   }
   console.log(txvalue, isNaN(txvalue))
-  if (isNaN(txvalue)) {
+  if (isNaN(txvalue) || txvalue === "") {
     message.error("转账金额不合法")
     return
   }
-  // 以太币转换，发送wei单位
-  txvalue = ethers.utils.parseEther(txvalue);
-  console.log("txvalue", txvalue)
 
   // 设置加载loading，成功或者识别后取消loading
   this.setState({loading: true})
 
-  service.sendTransaction(activeWallet, txto, txvalue)
+  service.sendTransaction(txto, txvalue)
       .then(tx => {
           console.log(tx)
-          message.success("交易成功")
           this.updateActiveWallet()
+          message.success("交易成功")
           this.setState({loading: false, txto: "", txvalue: ""})
       })
       .catch(e => {
@@ -129,11 +125,11 @@ onSendClick = () => {
       }
       this.setState({exportLoading: true})
       // 通过密码加密
-      this.getActiveWallet().encrypt(pwd, false).then(json => {
-          let blob = new Blob([json], {type: "text/plain;charset=utf-8"})
-          fileSaver.saveAs(blob, "keystore.json")
-          this.setState({exportLoading: false})
-      });
+      // this.getActiveWallet().encrypt(pwd, false).then(json => {
+      //     let blob = new Blob([json], {type: "text/plain;charset=utf-8"})
+      //     fileSaver.saveAs(blob, "keystore.json")
+      //     this.setState({exportLoading: false})
+      // });
   }
 
   // 页面加载完毕，更新钱包信息
@@ -153,12 +149,13 @@ onSendClick = () => {
         return <Spin size="large" tip="loading..."/>
     }
     let balance = wallet[1]
-    let balanceShow = ethers.utils.formatEther(balance) + "(" + balance.toString() + ")"
+    // let balanceShow = ethers.utils.formatEther(balance) + "(" + balance.toString() + ")"
+    let balanceShow = balance
     return (
       <Layout style={{ background: '#fff' }}>
         <PageHeader 
-          title="以太坊氢钱包"
-          avatar={{ src: 'images/ethereum.png', width: "50px", height:"50px" }}
+          title="波场氢钱包"
+          avatar={{ src: 'images/tron.png', width: "50px", height:"50px" }}
         />
         <div className="site-card-wrapper">
           <Row gutter={[16, 16]} type="flex" justify="center">
@@ -181,14 +178,14 @@ onSendClick = () => {
                       readOnly
                     />
                   </Form.Item>
-                  <Form.Item>
+                  {/* <Form.Item>
                     <Input 
                       prefix={<SwapOutlined />}
                       value={wallet[2]}
                       addonBefore="交易"
                       readOnly
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                 </Form>
               </Card>
             </Col>
@@ -212,7 +209,7 @@ onSendClick = () => {
                     <Input 
                       prefix={<MoneyCollectOutlined />}
                       addonBefore="金额"
-                      placeholder="eth"
+                      placeholder="trx"
                       type='text'
                       name='txvalue'
                       value={this.state.txvalue}
@@ -238,9 +235,9 @@ onSendClick = () => {
           </Row>
           <Row gutter={[16, 16]} type="flex" justify="center">
             <Col span={10}>
-              <Card title="设置" bordered={false}>
+              <Card title="私钥" bordered={false}>
               <Form size="large">
-                  <Form.Item>
+                  {/* <Form.Item>
                     <Input 
                       prefix={<LockOutlined />}
                       addonBefore="密码"
@@ -250,7 +247,7 @@ onSendClick = () => {
                       value={this.state.pwd}
                       onChange={this.handleChange}
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                   <Form.Item {...tailLayout}>
                     <Button
                       onClick={this.onExportPrivate}
@@ -258,14 +255,14 @@ onSendClick = () => {
                     >
                       查看私钥
                     </Button>
-                    <Button
+                    {/* <Button
                       loading={this.state.exportLoading}
                       onClick={this.onExportClick}
                       type="primary" size='large'
                       style={{ marginLeft: 15 + 'px' }}
                     >
                       KeyStore导出
-                    </Button>
+                    </Button> */}
                   </Form.Item>
                 </Form>
               </Card>

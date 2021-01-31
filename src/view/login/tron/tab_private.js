@@ -4,7 +4,7 @@ import PubSub from 'pubsub-js'
 
 import { LockOutlined, DownloadOutlined } from '@ant-design/icons';
 
-let service = require('../../../service/eth_service')
+let service = require('../../../service/tron_service')
 
 export default class PrivateLogin extends Component {
   
@@ -12,10 +12,10 @@ export default class PrivateLogin extends Component {
     privateKey: "",
   }
 
-  handleCreateClick = () => {
-      let privateKey = service.newRandomKey()
-      this.setState({privateKey})
-  }
+  // handleCreateClick = () => {
+  //     let privateKey = service.newRandomKey()
+  //     this.setState({privateKey})
+  // }
 
   handleChange = (e) => {
       this.setState({[e.target.name]: e.target.value})
@@ -28,16 +28,15 @@ export default class PrivateLogin extends Component {
         message.error(err)
         return;
       }
-      if (key.substring(0, 2).toLowerCase() !== '0x') {
-        key = '0x' + key;
-      }
       console.log("开始创建钱包", key)
-      let wallets = service.newWalletFromPrivateKey(key)
-      if (wallets) {
+      service.newWalletFromPrivateKey(key).then(wallets => {
         PubSub.publish("onLoginSucc", wallets)
-      } else {
-        message.error("导入出错")
-      }
+        this.setState({loading:false})
+      }).catch(e => {
+          console.log(e)
+          message.error("导入出错" + e)
+          this.setState({loading:false})
+      })
   }
 
   render() {
@@ -52,9 +51,9 @@ export default class PrivateLogin extends Component {
             onChange={this.handleChange}
           />
         </Form.Item>
-        <Form.Item>
+        {/* <Form.Item>
           <a href='#' onClick={this.handleCreateClick}>随机生成</a>
-        </Form.Item>
+        </Form.Item> */}
         <br/>
         <br/>
         <br/>

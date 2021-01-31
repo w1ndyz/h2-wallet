@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PubSub from 'pubsub-js'
 import LoginForm from '../login/tron/login'
-import Wallet from '../wallet/wallet'
+import Wallet from '../wallet/tron_wallet'
 
 export default class TronHome extends Component {
   state = {

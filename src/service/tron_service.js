@@ -1,7 +1,15 @@
-let tronweb = require('tronweb')
+import TronWebNode from 'tronweb';
+
+const Tronweb = require('tronweb')
+const HttpProvider = Tronweb.providers.HttpProvider
+const fullNode = new HttpProvider('https://api.shasta.trongrid.io');
+const solidityNode = new HttpProvider('https://api.shasta.trongrid.io');
+const eventServer = 'https://api.shasta.trongrid.io';
 
 // 默认路径
 const PATH_PREFIX="m/44'/195'/0'/0/"
+
+let tronweb = null
 
 // 私钥校验
 function checkPrivate(key) {
@@ -19,21 +27,60 @@ function checkPrivate(key) {
 
 // 地址校验
 function checkAddress(address) {
-  // try {
-  //   let realAddress = ethers.utils.getAddress(address)
-  //   console.log("realaddress",realAddress)
-  //   return realAddress
-  // }catch (e) {
-  //     return ""
-  // }
+  try {
+    let realAddress = tronweb.isAddress(address)
+    console.log("realaddress",realAddress)
+    return realAddress
+  } catch (e) {
+    return ""
+  }
 }
 
 // 随机私钥
 function newRandomKey() {}
 
+// 获取余额
+async function getBalance(address) {
+  console.log("aaaaaaaaaaa", address);
+  return new Promise(async (resolve, reject) => {
+    try {
+      let balance = await tronweb.trx.getBalance(address)
+      console.log("更新后的balance", balance)
+      resolve(tronweb.fromSun(balance))
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
 // 通过私钥创建钱包
 function newWalletFromPrivateKey(privateKey) {
-  
+    // let wallet = new ethers.Wallet(privateKey)
+  tronweb = new Tronweb(
+    fullNode,
+    solidityNode,
+    eventServer,
+    privateKey
+  )
+
+  let address = tronweb.address.fromPrivateKey(privateKey)
+  // return wallets
+  return new Promise(async (resolve, reject) => {
+    let wallets = []
+    try {
+      let wallet = await tronweb.trx.getAccount(address)
+      wallet.address  = tronweb.address.fromHex(wallet.address)
+      // wallet.balance = tronweb.fromSun(wallet.balance)
+      wallet.privateKey = tronweb.defaultPrivateKey
+      // let block = await tronweb.trx.getCurrentBlock()
+      // let trasactions = await tronweb.trx.getTransactionFromBlock(block.blockID)
+      wallets.push(wallet)
+      // wallets.push(trasactions.length)
+      resolve(wallets)
+    } catch (e) {
+      reject(e)
+    }
+  })
 }
 
 // 通过助记词创建钱包
@@ -55,7 +102,15 @@ function genMmic() {}
 function connectWallet(wallet, providerurl) {}
 
 // 发送交易
-function sendTransaction(wallet,to,value) {}
+function sendTransaction(to,value) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      resolve(tronweb.trx.sendTransaction(to, tronweb.toSun(value)))
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
 
 
 export {
@@ -65,6 +120,7 @@ export {
   newWalletFromPrivateKey,
   newWalletFromMmic,
   newRandomWallet,
+  getBalance,
   genMmic,
   newWalletFromJson,
   checkJsonWallet,
