@@ -1,10 +1,10 @@
-import TronWebNode from 'tronweb';
-
+import { tron_address } from '../config'
+const axios = require('axios')
 const Tronweb = require('tronweb')
 const HttpProvider = Tronweb.providers.HttpProvider
-const fullNode = new HttpProvider('https://api.shasta.trongrid.io');
-const solidityNode = new HttpProvider('https://api.shasta.trongrid.io');
-const eventServer = 'https://api.shasta.trongrid.io';
+const fullNode = new HttpProvider(tron_address);
+const solidityNode = new HttpProvider(tron_address);
+const eventServer = tron_address;
 
 // 默认路径
 const PATH_PREFIX="m/44'/195'/0'/0/"
@@ -112,6 +112,42 @@ function sendTransaction(to,value) {
   })
 }
 
+function getTransaction(address) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let columnData = []
+      let response = await axios.get(tron_address + '/v1/accounts/' + address + '/transactions')
+      let resultData = response.data.data
+      for (var i = 0; i < resultData.length; i++){ 
+        let key = i
+        let hash = interceptAndReplace(resultData[i].signature[0], 1, 4)
+        let sendFrom = tronweb.address.fromHex(resultData[i].raw_data.contract[0].parameter.value.owner_address)
+        let sendTo = tronweb.address.fromHex(resultData[i].raw_data.contract[0].parameter.value.to_address)
+        let type = resultData[i].raw_data.contract[0].type
+        let result = resultData[i].ret[0].contractRet
+        let tbalance = tronweb.fromSun(resultData[i].raw_data.contract[0].parameter.value.amount)
+        let data = {
+          key: key,
+          hash: hash,
+          sendFrom: sendFrom,
+          sendTo: sendTo,
+          type: type,
+          result: result,
+          balance: tbalance
+        }
+        columnData.push(data)
+      }
+      resolve(columnData)
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
+function interceptAndReplace (str,frontLen,endLen) {
+  return str.substring(0,frontLen)+"****"+str.substring(str.length-endLen);
+}
+
 
 export {
   checkPrivate,
@@ -126,5 +162,6 @@ export {
   checkJsonWallet,
   connectWallet,
   sendTransaction,
+  getTransaction,
 }
 

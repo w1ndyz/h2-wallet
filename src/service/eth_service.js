@@ -50,7 +50,6 @@ function newWalletFromPrivateKey(privateKey) {
 
 // 通过助记词创建钱包
 function newWalletFromMmic(mmic, path) {
-    console.log('1111', mmic, path)
     let wallets = []
     for (let i = 0; i < 10; i++) {
         path = PATH_PREFIX + i

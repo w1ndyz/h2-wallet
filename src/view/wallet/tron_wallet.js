@@ -9,10 +9,13 @@ import {
   Form, 
   Input,
   Button,
-  message
+  message,
+  Table, 
+  Tag, 
+  Space
 } from 'antd'
 import { tron_address } from '../../config'
-import { MoneyCollectOutlined, IdcardOutlined, SwapOutlined, LockOutlined } from '@ant-design/icons';
+import { MoneyCollectOutlined, IdcardOutlined } from '@ant-design/icons';
 
 let service = require('../../service/tron_service')
 let fileSaver = require('file-saver');
@@ -20,6 +23,40 @@ let fileSaver = require('file-saver');
 const tailLayout = {
   wrapperCol: { offset: 0, span: 48 },
 };
+
+let columnData
+const columns = [
+  {
+    title: '哈希',
+    dataIndex: 'hash',
+    key: 'hash',
+  },
+  {
+    title: '发送人',
+    dataIndex: 'sendFrom',
+    key: 'sendFrom',
+  },
+  {
+    title: '接收人',
+    dataIndex: 'sendTo',
+    key: 'sendTo',
+  },
+  {
+    title: '交易类型',
+    dataIndex: 'type',
+    key: 'type',
+  },
+  {
+    title: '结果',
+    dataIndex: 'result',
+    key: 'result',
+  },
+  {
+    title: '数额',
+    dataIndex: 'balance',
+    key: 'balance',
+  },
+]
 
 export default class Wallet extends Component {
 
@@ -68,6 +105,8 @@ async loadActiveWalletInfo(wallet) {
   console.log("加载钱包信息:", wallet);
   let address = wallet.address
   let balance = await service.getBalance(wallet.address)
+  columnData = await service.getTransaction(address)
+  
   // let tx =  this.state.wallets[1]
   // // 获取交易次数
   // let tx = await wallet.getTransactionCount()
@@ -237,17 +276,6 @@ onSendClick = () => {
             <Col span={10}>
               <Card title="私钥" bordered={false}>
               <Form size="large">
-                  {/* <Form.Item>
-                    <Input 
-                      prefix={<LockOutlined />}
-                      addonBefore="密码"
-                      placeholder="密码"
-                      type='password'
-                      name='pwd'
-                      value={this.state.pwd}
-                      onChange={this.handleChange}
-                    />
-                  </Form.Item> */}
                   <Form.Item {...tailLayout}>
                     <Button
                       onClick={this.onExportPrivate}
@@ -255,22 +283,15 @@ onSendClick = () => {
                     >
                       查看私钥
                     </Button>
-                    {/* <Button
-                      loading={this.state.exportLoading}
-                      onClick={this.onExportClick}
-                      type="primary" size='large'
-                      style={{ marginLeft: 15 + 'px' }}
-                    >
-                      KeyStore导出
-                    </Button> */}
                   </Form.Item>
                 </Form>
               </Card>
             </Col>
           </Row>
-            
-          
         </div>
+        <Table columns={columns} dataSource={columnData} >
+          
+        </Table>
       </Layout>
     )
   }
