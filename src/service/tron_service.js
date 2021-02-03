@@ -29,7 +29,6 @@ function checkPrivate(key) {
 function checkAddress(address) {
   try {
     let realAddress = tronweb.isAddress(address)
-    console.log("realaddress",realAddress)
     return realAddress
   } catch (e) {
     return ""
@@ -41,11 +40,9 @@ function newRandomKey() {}
 
 // 获取余额
 async function getBalance(address) {
-  console.log("aaaaaaaaaaa", address);
   return new Promise(async (resolve, reject) => {
     try {
       let balance = await tronweb.trx.getBalance(address)
-      console.log("更新后的balance", balance)
       resolve(tronweb.fromSun(balance))
     } catch (e) {
       reject(e)

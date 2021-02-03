@@ -26,7 +26,7 @@ export default class KeyStoreLogin extends Component {
       if (keyStore==""){
           return
       }
-      console.log(service.checkJsonWallet(keyStore))
+      // console.log(service.checkJsonWallet(keyStore))
       this.setState({loading:true})
       service.newWalletFromJson(keyStore, pwd).then(wallets => {
           PubSub.publish("onLoginSucc", wallets)

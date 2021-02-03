@@ -9,7 +9,8 @@ import {
   Form, 
   Input,
   Button,
-  message
+  message,
+  Table,
 } from 'antd'
 import { eth_address } from '../../config'
 import { MoneyCollectOutlined, IdcardOutlined, SwapOutlined, LockOutlined } from '@ant-design/icons';
@@ -17,6 +18,45 @@ import { MoneyCollectOutlined, IdcardOutlined, SwapOutlined, LockOutlined } from
 let ethers = require('ethers')
 let service = require('../../service/eth_service')
 let fileSaver = require('file-saver');
+
+let columnData
+const columns = [
+  {
+    title: '哈希',
+    dataIndex: 'hash',
+    key: 'hash',
+  },
+  {
+    title: '发送人',
+    dataIndex: 'sendFrom',
+    key: 'sendFrom',
+  },
+  {
+    title: '接收人',
+    dataIndex: 'sendTo',
+    key: 'sendTo',
+  },
+  {
+    title: '区块号码',
+    dataIndex: 'blockNumber',
+    key: 'blockNumber',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'timestamp',
+    key: 'timestamp',
+  },
+  {
+    title: '数额',
+    dataIndex: 'balance',
+    key: 'balance',
+  },
+  {
+    title: '手续费',
+    dataIndex: 'gasPrice',
+    key: 'gasPrice',
+  },
+]
 
 const tailLayout = {
   wrapperCol: { offset: 0, span: 48 },
@@ -61,7 +101,6 @@ updateActiveWallet() {
 // 获取当前的钱包
 getActiveWallet() {
     let wallet = this.state.wallets[this.state.selectWallet]
-    console.log("wallet", wallet)
     // 激活钱包需要连接provider
     return service.connectWallet(wallet, this.state.provider)
 }
@@ -72,7 +111,8 @@ async loadActiveWalletInfo(wallet) {
     let balance = await wallet.getBalance()
     // 获取交易次数
     let tx = await wallet.getTransactionCount()
-    console.log(address, balance, tx);
+    // console.log(address, balance, tx);
+    columnData = await service.getHistoryTransaction(address)
     this.setState({
         walletInfo: [address, balance, tx]
     })
@@ -83,28 +123,28 @@ onSendClick = () => {
   let {txto, txvalue, activeWallet} = this.state
   // balance 为Object类型
 
-  console.log("balance", activeWallet)
+  // console.log("balance", activeWallet)
   // 地址校验
   let address = service.checkAddress(txto)
   if (address == "") {
     message.error("地址不正确")
     return 
   }
-  console.log(txvalue, isNaN(txvalue))
+  // console.log(txvalue, isNaN(txvalue))
   if (isNaN(txvalue)) {
     message.error("转账金额不合法")
     return
   }
   // 以太币转换，发送wei单位
   txvalue = ethers.utils.parseEther(txvalue);
-  console.log("txvalue", txvalue)
+  // console.log("txvalue", txvalue)
 
   // 设置加载loading，成功或者识别后取消loading
   this.setState({loading: true})
 
   service.sendTransaction(activeWallet, txto, txvalue)
       .then(tx => {
-          console.log(tx)
+          // console.log(tx)
           message.success("交易成功")
           this.updateActiveWallet()
           this.setState({loading: false, txto: "", txvalue: ""})
@@ -148,7 +188,7 @@ onSendClick = () => {
   render() {
     // 金额显示需要手工转换
     let wallet = this.state.walletInfo
-    console.log("wallet>:", wallet);
+    // console.log("wallet>:", wallet);
     if (wallet.length == 0) {
         return <Spin size="large" tip="loading..."/>
     }
@@ -271,9 +311,8 @@ onSendClick = () => {
               </Card>
             </Col>
           </Row>
-            
-          
         </div>
+        <Table columns={columns} dataSource={columnData} />
       </Layout>
     )
   }

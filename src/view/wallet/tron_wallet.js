@@ -11,8 +11,6 @@ import {
   Button,
   message,
   Table, 
-  Tag, 
-  Space
 } from 'antd'
 import { tron_address } from '../../config'
 import { MoneyCollectOutlined, IdcardOutlined } from '@ant-design/icons';
@@ -110,7 +108,7 @@ async loadActiveWalletInfo(wallet) {
   // let tx =  this.state.wallets[1]
   // // 获取交易次数
   // let tx = await wallet.getTransactionCount()
-  console.log(address, balance);
+  // console.log(address, balance);
   this.setState({
       walletInfo: [address, balance]
     })
@@ -121,14 +119,14 @@ onSendClick = () => {
   let {txto, txvalue, activeWallet} = this.state
   // balance 为Object类型
 
-  console.log("balance", activeWallet)
+  // console.log("balance", activeWallet)
   // 地址校验
   let address = service.checkAddress(txto)
   if (address == "") {
     message.error("地址不正确")
     return 
   }
-  console.log(txvalue, isNaN(txvalue))
+  // console.log(txvalue, isNaN(txvalue))
   if (isNaN(txvalue) || txvalue === "") {
     message.error("转账金额不合法")
     return
@@ -139,7 +137,7 @@ onSendClick = () => {
 
   service.sendTransaction(txto, txvalue)
       .then(tx => {
-          console.log(tx)
+          // console.log(tx)
           this.updateActiveWallet()
           message.success("交易成功")
           this.setState({loading: false, txto: "", txvalue: ""})
@@ -183,7 +181,7 @@ onSendClick = () => {
   render() {
     // 金额显示需要手工转换
     let wallet = this.state.walletInfo
-    console.log("wallet>:", wallet);
+    // console.log("wallet>:", wallet);
     if (wallet.length == 0) {
         return <Spin size="large" tip="loading..."/>
     }
@@ -217,14 +215,6 @@ onSendClick = () => {
                       readOnly
                     />
                   </Form.Item>
-                  {/* <Form.Item>
-                    <Input 
-                      prefix={<SwapOutlined />}
-                      value={wallet[2]}
-                      addonBefore="交易"
-                      readOnly
-                    />
-                  </Form.Item> */}
                 </Form>
               </Card>
             </Col>
@@ -289,9 +279,7 @@ onSendClick = () => {
             </Col>
           </Row>
         </div>
-        <Table columns={columns} dataSource={columnData} >
-          
-        </Table>
+        <Table columns={columns} dataSource={columnData} />
       </Layout>
     )
   }

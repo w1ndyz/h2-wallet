@@ -17,8 +17,8 @@ export default class TronHome extends Component {
   }
 
   onLoginSucc = (msg, data) => {
-      console.log("登陆成功")
-      console.log(data)
+      // console.log("登陆成功")
+      // console.log(data)
       this.setState({
           login: true,
           wallets: data

@@ -25,7 +25,6 @@ function checkPrivate(key) {
 function checkAddress(address) {
     try {
         let realAddress =ethers.utils.getAddress(address)
-        console.log("realaddress",realAddress)
         return realAddress
     }catch (e) {
         return ""
@@ -55,7 +54,6 @@ function newWalletFromMmic(mmic, path) {
         path = PATH_PREFIX + i
         let wallet = ethers.Wallet.fromMnemonic(mmic, path)
         wallets.push(wallet)
-        console.log(i, wallets)
     }
     return wallets
 }
@@ -108,6 +106,94 @@ function sendTransaction(wallet,to,value) {
     })
 }
 
+// 获取历史交易
+function getHistoryTransaction(address) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let columnData = []
+            // 测试网用ropsten的etherscan,正式环境不用带
+            let provider = new ethers.providers.EtherscanProvider('ropsten')
+            let history = await provider.getHistory(address)
+            for (var i = 0; i < history.length; i++) {
+                let key = i
+                let hash = interceptAndReplace(history[i].blockHash, 1, 4)
+                let sendFrom = interceptAndReplace(history[i].from, 4, 5)
+                let sendTo = interceptAndReplace(history[i].to, 4, 5)
+                let blockNumber = history[i].blockNumber
+                let timestamp = getDateDiff(history[i].timestamp)
+                let tbalance = ethers.utils.formatEther(history[i].value.toString()) + ' Eth'
+                // 这里涉及到Gwei和eth的转换
+                let gasPrice = ethers.utils.formatEther(history[i].gasPrice.mul(21000)) + ' Eth'
+                let data = {
+                    key: key,
+                    hash: hash,
+                    sendFrom: sendFrom,
+                    sendTo: sendTo,
+                    blockNumber: blockNumber,
+                    timestamp: timestamp,
+                    balance: tbalance,
+                    gasPrice: gasPrice,
+                }
+                columnData.push(data)
+            }
+            resolve(columnData)
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+function interceptAndReplace (str,frontLen,endLen) {
+    return str.substring(0,frontLen)+"****"+str.substring(str.length-endLen);
+}
+
+function getDateDiff(data) {
+    //var str = data;
+    //将字符串转换成时间格式
+    var timePublish = new Date(data * 1000);
+    var timeNow = new Date();
+    var minute = 1000 * 60;
+    var hour = minute * 60;
+    var day = hour * 24;
+    var month = day * 30;
+    var diffValue = timeNow - timePublish;
+    var diffMonth = diffValue / month;
+    var diffWeek = diffValue / (7 * day);
+    var diffDay = diffValue / day;
+    var diffHour = diffValue / hour;
+    var diffMinute = diffValue / minute;
+    var result
+    if (diffValue < 0) {
+        alert("错误时间");
+    }
+    else if (diffMonth > 3) {
+        result = timePublish.getFullYear() + "-";
+        result += timePublish.getMonth() + "-";
+        result += timePublish.getDate();
+        alert(result);
+    }
+    else if (diffMonth > 1) {
+        result = parseInt(diffMonth) + "月前";
+    }
+    else if (diffWeek > 1) {
+        result = parseInt(diffWeek) + "周前";
+    }
+    else if (diffDay > 1) {
+        result = parseInt(diffDay) + "天前";
+    }
+    else if (diffHour > 1) {
+        result = parseInt(diffHour) + "小时前";
+    }
+    else if (diffMinute > 1) {
+        result = parseInt(diffMinute) + "分钟前";
+    }
+    else {
+        result = "刚收藏";
+    }
+    return result;
+}
+  
+
 export {
     checkPrivate,
     checkAddress,
@@ -120,4 +206,5 @@ export {
     checkJsonWallet,
     connectWallet,
     sendTransaction,
+    getHistoryTransaction
 }
